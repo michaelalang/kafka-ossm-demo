@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: pizza-frontend
+  namespace: kafka
+spec:
+  gateways:
+  - istio-system/frontend-gateway
+  hosts:
+  - pizza-frontend.apps.example.com
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: pizza-frontend.kafka.svc.cluster.local
+        subset: v1
+      weight: 100

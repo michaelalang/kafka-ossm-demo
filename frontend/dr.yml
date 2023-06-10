@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: pizza-frontend
+  namespace: kafka
+spec:
+  host: pizza-frontend.kafka.svc.cluster.local
+  subsets:
+  - labels:
+      version: v1
+    name: v1
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL

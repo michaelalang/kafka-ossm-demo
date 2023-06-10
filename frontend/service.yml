@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pizza-frontend
+  namespace: kafka
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: frontend
+    version: v1
+  sessionAffinity: None
+  type: ClusterIP

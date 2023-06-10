@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kitchen
+    version: v1
+  name: kitchen1
+  namespace: kafka
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: kitchen
+      version: v1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate 
+  template:
+    metadata:
+      labels:
+        sidecar.istio.io/inject: "true"
+        app: kitchen
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: JAEGER_ALL_IN_ONE_INMEMORY_COLLECTOR_PORT_14268_TCP_ADDR
+          value: jaeger-collector.istio-system.svc
+        - name: JAEGER_ALL_IN_ONE_INMEMORY_COLLECTOR_PORT_14268_TCP_PORT
+          value: "14268"
+        - name: KAFKA_BOOTSTRAP
+          value: pizza-kafka-bootstrap:9092
+        - name: SPEED
+          value: "0"
+        - name: JOB
+          value: "store1.*"
+        image: localhost/consumer:latest
+        imagePullPolicy: Always
+        name: kitchen
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 3

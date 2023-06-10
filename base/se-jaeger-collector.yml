@@ -1,0 +1,15 @@
+kind: ServiceEntry
+apiVersion: networking.istio.io/v1beta1
+metadata:
+  name: se-jaeger-collector
+  namespace: kafka
+spec:
+  hosts:
+    - jaeger-collector.istio-system.svc
+  ports:
+    - number: 14268
+      protocol: HTTP
+      name: http
+      targetPort: 14268
+  resolution: DNS
+status: {}

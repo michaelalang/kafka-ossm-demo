@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- kitchen1.yml
+- kitchen2.yml
+- waiter1.yml
+- waiter2.yml
+
+images:
+- name: localhost/consumer
+  newName: <your-repository-name>/consumer

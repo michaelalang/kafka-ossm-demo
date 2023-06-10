@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: stores
+    deploy: pizza
+    version: v1
+  name: store1
+  namespace: kafka
+spec:
+  progressDeadlineSeconds: 60
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: stores
+      version: v1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: stores
+        deploy: pizza
+        version: v1
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - env:
+        - name: JAEGER_ALL_IN_ONE_INMEMORY_COLLECTOR_PORT_14268_TCP_ADDR
+          value: jaeger-collector.istio-system.svc
+        - name: JAEGER_ALL_IN_ONE_INMEMORY_COLLECTOR_PORT_14268_TCP_PORT
+          value: "14268"
+        - name: BRANCH
+          value: store1
+        - name: SLEEP
+          value: "2"
+        - name: KAFKA_BOOTSTRAP
+          value: pizza-kafka-bootstrap:9092
+        image: localhost/producer:latest
+        imagePullPolicy: Always
+        name: store
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 3
+
