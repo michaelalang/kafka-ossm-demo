@@ -3218,6 +3218,7 @@ spec:
       labels:
         name: strimzi-cluster-operator
         strimzi.io/kind: cluster-operator
+        sidecar.istio.io/inject: 'true'
     spec:
       serviceAccountName: strimzi-cluster-operator
       volumes:
@@ -3306,6 +3307,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: KUBERNETES_SERVICE_DNS_DOMAIN
+              value: cluster.local
+            - name: KUBERNETES_SERVICE_HOST
+              value: kubernetes.default.svc.cluster.local
           livenessProbe:
             httpGet:
               path: /healthy
