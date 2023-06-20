@@ -36,6 +36,31 @@ the `REPOSITORYNAME` references shall match those specified in the kustomziation
 
 ## deploy the strimzi ClusterOperator
 
+**NOTE** if you are not using the strimzi operator from this LAB source, you need to adjust the operator deployment in ServiceMesh mode `cluster` with following
+
+```
+# extend the deployment environment variables with
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strimzi-cluster-operator
+  labels:
+    app: strimzi
+  namespace: kafka
+spec:
+  ...
+      containers:
+        - name: strimzi-cluster-operator
+	...
+          env:
+            - name: KUBERNETES_SERVICE_DNS_DOMAIN
+              value: cluster.local
+            - name: KUBERNETES_SERVICE_HOST
+              value: kubernetes.default.svc.cluster.local
+	    ...
+```
+
 ```
 oc -n kafka create -k overlays/openshift/
 oc -n kafka wait --for condition=Ready pod -l name=strimzi-cluster-operator
